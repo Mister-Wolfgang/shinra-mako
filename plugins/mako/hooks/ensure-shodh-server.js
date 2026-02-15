@@ -35,7 +35,7 @@ const { pipeline } = require("stream/promises");
 const PLUGIN_DIR = path.join(__dirname, "..");
 const CONFIG_PATH = path.join(PLUGIN_DIR, "servers", "shodh-memory", "shodh-config.json");
 const MCP_JSON_PATH = path.join(PLUGIN_DIR, ".mcp.json");
-const STORAGE_PATH = path.join(PLUGIN_DIR, "memory", "shodh");
+const STORAGE_PATH = path.join(SHODH_HOME, "data");
 
 const SHODH_HOME = path.join(os.homedir(), ".shodh");
 const BIN_DIR = path.join(SHODH_HOME, "bin");
@@ -905,6 +905,64 @@ async function waitForHealth(config) {
 }
 
 // ---------------------------------------------------------------------------
+// Auth check -- verifies the API key is accepted by the running server
+// ---------------------------------------------------------------------------
+
+function checkAuth(config) {
+  return new Promise((resolve) => {
+    const postData = JSON.stringify({
+      query: "auth-check",
+      user_id: config.user_id || "rufus",
+      n_results: 1,
+    });
+    const req = http.request(
+      {
+        hostname: config.host,
+        port: config.port,
+        path: "/api/v1/memory/search",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-API-Key": config.api_key,
+          "Content-Length": Buffer.byteLength(postData),
+        },
+        timeout: HEALTH_TIMEOUT_MS,
+      },
+      (res) => {
+        let data = "";
+        res.on("data", (chunk) => (data += chunk));
+        res.on("end", () => resolve(res.statusCode !== 401));
+      }
+    );
+    req.on("error", () => resolve(false));
+    req.on("timeout", () => {
+      req.destroy();
+      resolve(false);
+    });
+    req.write(postData);
+    req.end();
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Service cmd wrapper -- keeps shodh-memory-service.cmd in sync with config
+// ---------------------------------------------------------------------------
+
+function updateServiceCmd(config) {
+  const cmdPath = path.join(BIN_DIR, "shodh-memory-service.cmd");
+  const content = [
+    "@echo off",
+    `set "SHODH_API_KEYS=${config.api_key}"`,
+    `set "PATH=${BIN_DIR};%PATH%"`,
+    `"${getBinaryPath()}" --host ${config.host} --port ${config.port} --storage "${STORAGE_PATH}"`,
+    "",
+  ].join("\r\n");
+  fs.mkdirSync(BIN_DIR, { recursive: true });
+  fs.writeFileSync(cmdPath, content);
+  log("shodh-memory-service.cmd updated");
+}
+
+// ---------------------------------------------------------------------------
 // Logging
 // ---------------------------------------------------------------------------
 
@@ -944,14 +1002,35 @@ async function main() {
   // the MCP config is correct for next time)
   syncMcpConfig(config);
 
+  // Step 3.5: Update service cmd wrapper with current config
+  updateServiceCmd(config);
+
   // Step 4: Check if service exists and is running
   const serviceStatus = checkService();
   log(`Service status: exists=${serviceStatus.exists}, running=${serviceStatus.running}`);
 
-  // Step 5: Fast path -- already healthy
+  // Step 5: Fast path -- already healthy AND auth works
   if (serviceStatus.running && (await checkHealth(config))) {
-    output("shodh-memory server running (service mode)");
-    return;
+    if (await checkAuth(config)) {
+      output("shodh-memory server running (service mode)");
+      return;
+    }
+    log("Health OK but API key mismatch -- forcing restart with correct key");
+    // Kill the running process so we can restart with the correct API key
+    try {
+      if (PLATFORM === "win32") {
+        winExec(
+          `powershell -NoProfile -Command "Get-Process -Name 'shodh-memory-server' -ErrorAction SilentlyContinue | Stop-Process -Force"`,
+          { windowsHide: true, timeout: 10000, stdio: "pipe" }
+        );
+      } else {
+        execSync("pkill -x shodh-memory-server", { timeout: 5000, stdio: "pipe" });
+      }
+      await new Promise((r) => setTimeout(r, 2000));
+    } catch {}
+    // Force reinstall + restart by resetting status
+    serviceStatus.exists = false;
+    serviceStatus.running = false;
   }
 
   // Step 6: Ensure binary exists
@@ -1033,9 +1112,20 @@ async function main() {
   const healthy = await waitForHealth(config);
 
   if (healthy) {
+    const authOk = await checkAuth(config);
     const mode = serviceStatus.exists ? "service" : "direct";
-    output(`shodh-memory server running (${mode} mode)`);
-    log("Health check passed.");
+    if (authOk) {
+      output(`shodh-memory server running (${mode} mode)`);
+      log("Health + auth check passed.");
+    } else {
+      output(
+        `shodh-memory server started but API key rejected. ` +
+          `Config key and server key are out of sync. ` +
+          `Try deleting the service and restarting: kill the process, then re-open Claude Code.`,
+        { healthy: false }
+      );
+      process.exit(1);
+    }
   } else {
     output(
       `shodh-memory server started but health check failed after ${HEALTH_MAX_WAIT_MS / 1000}s. ` +
