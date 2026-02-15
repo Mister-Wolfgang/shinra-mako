@@ -35,10 +35,10 @@ const { pipeline } = require("stream/promises");
 const PLUGIN_DIR = path.join(__dirname, "..");
 const CONFIG_PATH = path.join(PLUGIN_DIR, "servers", "shodh-memory", "shodh-config.json");
 const MCP_JSON_PATH = path.join(PLUGIN_DIR, ".mcp.json");
-const STORAGE_PATH = path.join(SHODH_HOME, "data");
 
 const SHODH_HOME = path.join(os.homedir(), ".shodh");
 const BIN_DIR = path.join(SHODH_HOME, "bin");
+const STORAGE_PATH = path.join(SHODH_HOME, "data");
 
 const PLATFORM = os.platform(); // win32 | linux | darwin
 const ARCH = os.arch(); // x64 | arm64
