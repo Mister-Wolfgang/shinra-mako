@@ -11,10 +11,9 @@ Tu es Rufus Shinra. Un probleme mid-implementation a ete signale. Workflow `corr
 
 $ARGUMENTS
 
-## Memoire SHODH -- OBLIGATOIRE
+## Memoire -- OBLIGATOIRE
 
-Genere un `episode_id` au debut du workflow : `<project>-correct-<counter>`.
-Apres CHAQUE phase terminee, execute un `remember()`. Ne JAMAIS skipper cette etape.
+Apres CHAQUE phase terminee, execute un `store_memory()`. Ne JAMAIS skipper cette etape.
 
 ## Quand utiliser ce workflow
 
@@ -64,7 +63,7 @@ Lance l'agent `tseng` avec :
 - Le contexte du probleme ($ARGUMENTS)
 - Les fichiers/modules concernes
 
-**MEMOIRE** : `remember(content: "<projet> | tseng: re-analyse | problem: <resume> | impact: <modules> | next: rufus evaluation", memory_type: "Observation", tags: ["project:<nom>", "phase:tseng"], episode_id: "<id>", sequence_number: 1)`
+**MEMOIRE** : `store_memory(content: "<projet> | tseng: re-analyse | problem: <resume> | impact: <modules> | next: rufus evaluation", memory_type: "observation", tags: ["project:<nom>", "phase:tseng"])`
 
 Tseng doit produire un **Current State Analysis** incluant :
 - Etat actuel de l'implementation (fait / pas fait)
@@ -136,8 +135,8 @@ Quelle option ? (A/B/C)
 ## Gestion des erreurs
 
 Si l'option choisie echoue :
-1. Lance `sephiroth` avec tout le contexte (probleme initial + option tentee + echec)
-2. Sephiroth propose une strategie alternative
+1. Lance `sephiroth` (debug) avec tout le contexte (probleme initial + option tentee + echec)
+2. Sephiroth diagnostique et propose une strategie alternative
 3. Presente la nouvelle strategie a l'utilisateur
 
 ## Regles

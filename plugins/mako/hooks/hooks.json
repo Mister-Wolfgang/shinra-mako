@@ -7,12 +7,24 @@
             "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/ensure-memory-server.js\"",
             "timeout": 120000,
-            "statusMessage": "🧠 Configuring mcp-memory-service..."
+            "statusMessage": "Configuring mcp-memory-service..."
           },
           {
             "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/inject-rufus.js\"",
-            "statusMessage": "👔 Rufus Shinra prend le controle..."
+            "statusMessage": "Rufus Shinra prend le controle..."
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/user-prompt-submit-rufus.js\"",
+            "timeout": 5000,
+            "statusMessage": "Rufus context reload..."
           }
         ]
       }
@@ -25,7 +37,7 @@
             "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/pre-commit-check.js\"",
             "timeout": 180000,
-            "statusMessage": "🔥 Running tests before commit..."
+            "statusMessage": "Running tests before commit..."
           }
         ]
       }
@@ -35,9 +47,21 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/subagent-memory-reminder.js\"",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/subagent-stop-memory.js\"",
             "timeout": 5000,
-            "statusMessage": "🧠 Memory checkpoint reminder..."
+            "statusMessage": "Memory checkpoint + pipeline routing..."
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/pre-compact-save.js\"",
+            "timeout": 10000,
+            "statusMessage": "Saving session state before compaction..."
           }
         ]
       }

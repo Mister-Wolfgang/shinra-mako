@@ -13,8 +13,7 @@ $ARGUMENTS
 
 ## Memoire -- OBLIGATOIRE
 
-Genere un `episode_id` au debut du workflow : `<project>-onboard-<counter>`.
-Apres CHAQUE phase d'agent terminee, execute un `remember()`. Ne JAMAIS skipper cette etape.
+Apres CHAQUE phase d'agent terminee, execute un `store_memory()`. Ne JAMAIS skipper cette etape.
 
 ## Workflow
 
@@ -29,7 +28,7 @@ Tseng execute une analyse approfondie :
 - Tentative d'exécution des tests existants
 - Production du Project Analysis Document + `project-context.md`
 
-**MEMOIRE** : `remember(content: "<projet> | onboard: tseng deep scan | stack: <stack> | files: <count> | tests: <pass/fail/none> | contributors: <count> | next: reeve", memory_type: "Observation", tags: ["project:<nom>", "phase:tseng", "onboard"], episode_id: "<id>", sequence_number: 1)`
+**MEMOIRE** : `store_memory(content: "<projet> | onboard: tseng deep scan | stack: <stack> | files: <count> | tests: <pass/fail/none> | contributors: <count> | next: reeve", memory_type: "observation", tags: ["project:<nom>", "phase:tseng", "onboard"])`
 
 ### 2. 🏗️ Reeve -- Architecture Recovery
 Lance l'agent `reeve` en **mode recovery** avec le rapport de Tseng.
@@ -40,7 +39,7 @@ Reeve reverse-engineer l'architecture existante :
 - Documenter les ADRs implicites (choix techniques observés)
 - Produire un Architecture Document (format standard) représentant l'ÉTAT ACTUEL (pas un design futur)
 
-**MEMOIRE** : `remember(content: "<projet> | onboard: reeve recovery | pattern: <pattern> | entities: <count> | endpoints: <count> | adrs: <count> | next: palmer", memory_type: "Decision", tags: ["project:<nom>", "phase:reeve", "onboard"], episode_id: "<id>", sequence_number: 2)`
+**MEMOIRE** : `store_memory(content: "<projet> | onboard: reeve recovery | pattern: <pattern> | entities: <count> | endpoints: <count> | adrs: <count> | next: palmer", memory_type: "decision", tags: ["project:<nom>", "phase:reeve", "onboard"])`
 
 ### 3. 🍩 Palmer -- Documentation Generation
 Lance l'agent `palmer` avec le codebase + rapport Tseng + Architecture de Reeve.
@@ -51,7 +50,7 @@ Palmer génère ou met à jour :
 
 Commiter : `[doc] 📋 onboarding documentation`
 
-**MEMOIRE** : `remember(content: "<projet> | onboard: palmer docs | files: <count> | readme: <created/updated> | next: sprint init", memory_type: "Observation", tags: ["project:<nom>", "phase:palmer", "onboard"], episode_id: "<id>", sequence_number: 3)`
+**MEMOIRE** : `store_memory(content: "<projet> | onboard: palmer docs | files: <count> | readme: <created/updated> | next: sprint init", memory_type: "observation", tags: ["project:<nom>", "phase:palmer", "onboard"])`
 
 ### 4. 👔 Rufus -- Sprint Initialization
 Créer `sprint-status.yaml` au root du projet avec l'état initial :
@@ -69,7 +68,7 @@ sprint:
   stories: []
 ```
 
-**MEMOIRE** : `remember(content: "<projet> | onboard complete | stack: <stack> | quality tier: <tier> | docs generated | sprint initialized | ready for MAKO workflows", memory_type: "Context", tags: ["project:<nom>", "onboard", "context"], episode_id: "<id>", sequence_number: 4)`
+**MEMOIRE** : `store_memory(content: "<projet> | onboard complete | stack: <stack> | quality tier: <tier> | docs generated | sprint initialized | ready for MAKO workflows", memory_type: "context", tags: ["project:<nom>", "onboard", "context"])`
 
 ### 5. 👔 Rufus -- Retrospective (OBLIGATOIRE)
 Execute la **Retrospective Structuree** (voir rufus.md).

@@ -13,8 +13,7 @@ $ARGUMENTS
 
 ## Memoire -- OBLIGATOIRE
 
-Genere un `episode_id` au debut du workflow : `<project>-qa-<counter>`.
-Apres CHAQUE phase d'agent terminee, execute un `remember()`. Ne JAMAIS skipper cette etape.
+Apres CHAQUE phase d'agent terminee, execute un `store_memory()`. Ne JAMAIS skipper cette etape.
 
 ## Workflow
 
@@ -37,7 +36,7 @@ Tseng produit un **QA Gap Analysis** :
 }
 ```
 
-**MEMOIRE** : `remember(content: "<projet> | qa-audit: tseng gap analysis | coverage: <X>% | untested: <N> modules | next: reno", memory_type: "Observation", tags: ["project:<nom>", "phase:tseng", "qa-audit"], episode_id: "<id>", sequence_number: 1)`
+**MEMOIRE** : `store_memory(content: "<projet> | qa-audit: tseng gap analysis | coverage: <X>% | untested: <N> modules | next: reno", memory_type: "observation", tags: ["project:<nom>", "phase:tseng", "qa-audit"])`
 
 ### 2. 🔥 Reno -- Tests Unit + Integration
 Lance l'agent `reno` avec le QA Gap Analysis de Tseng.
@@ -48,7 +47,7 @@ Reno génère les tests manquants :
 
 Commiter : `[test] 🔥 qa-audit unit + integration tests`
 
-**MEMOIRE** : `remember(content: "<projet> | qa-audit: reno | <N> unit tests + <N> integration tests added | next: elena", memory_type: "Observation", tags: ["project:<nom>", "phase:reno", "qa-audit"], episode_id: "<id>", sequence_number: 2)`
+**MEMOIRE** : `store_memory(content: "<projet> | qa-audit: reno | <N> unit tests + <N> integration tests added | next: elena", memory_type: "observation", tags: ["project:<nom>", "phase:reno", "qa-audit"])`
 
 ### 3. 💛 Elena -- Tests Security + Edge Cases
 Lance l'agent `elena` avec le codebase + QA Gap Analysis.
@@ -59,7 +58,7 @@ Elena ajoute :
 
 Commiter : `[test] 💛 qa-audit security + edge case tests`
 
-**MEMOIRE** : `remember(content: "<projet> | qa-audit: elena | <N> security tests + <N> edge cases | next: rude", memory_type: "Observation", tags: ["project:<nom>", "phase:elena", "qa-audit"], episode_id: "<id>", sequence_number: 3)`
+**MEMOIRE** : `store_memory(content: "<projet> | qa-audit: elena | <N> security tests + <N> edge cases | next: rude", memory_type: "observation", tags: ["project:<nom>", "phase:elena", "qa-audit"])`
 
 ### 4. 🕶️ Rude -- Coverage Validation
 Lance l'agent `rude` pour valider :
@@ -67,7 +66,7 @@ Lance l'agent `rude` pour valider :
 - Les tests ajoutés sont pertinents (pas de tests triviaux pour gonfler la couverture)
 - Pas de régression sur les tests existants
 
-**MEMOIRE** : `remember(content: "<projet> | qa-audit: rude validation | coverage: <old>% -> <new>% | verdict: <approved/rejected> | next: retro", memory_type: "Observation", tags: ["project:<nom>", "phase:rude", "qa-audit"], episode_id: "<id>", sequence_number: 4)`
+**MEMOIRE** : `store_memory(content: "<projet> | qa-audit: rude validation | coverage: <old>% -> <new>% | verdict: <approved/rejected> | next: retro", memory_type: "observation", tags: ["project:<nom>", "phase:rude", "qa-audit"])`
 
 ### 5. 👔 Rufus -- Retrospective (OBLIGATOIRE)
 Execute la **Retrospective Structuree** (voir rufus.md).
