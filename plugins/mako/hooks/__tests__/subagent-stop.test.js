@@ -230,7 +230,7 @@ describe('ST-5: SubagentStop Hook (subagent-stop-memory.js)', () => {
       ['palmer', 'rude'],
       ['rude', 'DoD gate'],
       ['sephiroth', 'hojo'],
-      ['jenova', 'report to user'],
+      ['lucrecia', 'report to user'],
     ];
 
     it.each(routingCases)(

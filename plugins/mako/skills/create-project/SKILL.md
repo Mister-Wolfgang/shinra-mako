@@ -177,4 +177,4 @@ Execute la **Retrospective Structuree** (voir rufus.md) :
 
 ### En cas d'echec ou de review rejetee
 Lance l'agent `sephiroth` (debug) avec l'erreur/le rapport de Rude.
-Il analysera la cause racine et proposera un fix. Si l'erreur est recurrente, Sephiroth signalera a Rufus d'invoquer `jenova` (meta-learning).
+Il analysera la cause racine et proposera un fix. Si l'erreur est recurrente, Sephiroth signalera a Rufus d'invoquer `lucrecia` (meta-learning).

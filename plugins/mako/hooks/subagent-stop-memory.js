@@ -32,8 +32,8 @@ const ROUTING = {
   elena: "palmer (docs) or rude (review)",
   palmer: "rude (review)",
   rude: "DoD gate then retrospective",
-  sephiroth: "hojo (apply fix) or jenova (meta-learning)",
-  jenova: "report to user",
+  sephiroth: "hojo (apply fix) or lucrecia (meta-learning)",
+  lucrecia: "report to user",
 };
 
 function main() {

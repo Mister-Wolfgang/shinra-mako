@@ -770,7 +770,7 @@ describe("validate-plugin.js: Robustness", () => {
       }),
       "agents/tseng.md": "---\nname: tseng\ndescription: test\ntools: []\nmodel: opus\n---\n# Tseng",
       "agents/hojo.md": "---\nname: hojo\ndescription: test\ntools: []\nmodel: opus\n---\n# Hojo",
-      "agents/jenova.md": "---\nname: jenova\ndescription: test\ntools: []\nmodel: opus\n---\n# JENOVA",
+      "agents/lucrecia.md": "---\nname: lucrecia\ndescription: test\ntools: []\nmodel: opus\n---\n# LUCRECIA",
       "skills/create-project/SKILL.md": "# Create Project\nUse store_memory().",
       "hooks/hooks.json": JSON.stringify({
         hooks: {
@@ -797,7 +797,7 @@ describe("validate-plugin.js: Robustness", () => {
 |-------|------|--------|
 | \`tseng\` | Discovery | opus |
 | \`hojo\` | Dev | sonnet |
-| \`jenova\` | Meta | opus |
+| \`lucrecia\` | Meta | opus |
 
 ## Skills disponibles
 

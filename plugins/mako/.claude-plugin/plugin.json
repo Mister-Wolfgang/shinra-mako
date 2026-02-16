@@ -1,7 +1,7 @@
 {
   "name": "mako",
   "description": "MAKO (Modular Agent Kit for Orchestration) -- 13 specialized agents with Shinra personalities for full project lifecycle management",
-  "version": "5.1.0",
+  "version": "6.1.0",
   "author": {
     "name": "Shinra Electric Power Company"
   },

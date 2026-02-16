@@ -142,4 +142,4 @@ Execute la **Retrospective Structuree** (voir rufus.md) :
 **MEMOIRE** : `store_memory(content: "<projet> | workflow: modify-project | resultat: <approved/rejected> | WWW: <points> | WWW: <points> | action items: <SMART items>", memory_type: "learning", tags: ["project:<nom>", "retrospective", "action-item"])`
 
 ### En cas d'echec
-Lance `sephiroth` (debug). Si erreur recurrente, Sephiroth signalera d'invoquer `jenova` (meta-learning).
+Lance `sephiroth` (debug). Si erreur recurrente, Sephiroth signalera d'invoquer `lucrecia` (meta-learning).

@@ -371,18 +371,18 @@ function main() {
     return errors.length === 0 || errors.join("; ");
   });
 
-  // 10. JENOVA exists
-  check("JENOVA agent exists", () => {
-    const jenovaPath = path.join(agentsDir, "jenova.md");
-    if (!fs.existsSync(jenovaPath)) {
-      return "jenova.md not found in agents/";
+  // 10. LUCRECIA exists
+  check("LUCRECIA agent exists", () => {
+    const lucreciaPath = path.join(agentsDir, "lucrecia.md");
+    if (!fs.existsSync(lucreciaPath)) {
+      return "lucrecia.md not found in agents/";
     }
 
     const rufusContent = readFile(rufusPath);
     if (!rufusContent) return "rufus.md not found";
 
-    if (!rufusContent.includes("jenova") && !rufusContent.includes("JENOVA")) {
-      return "JENOVA not referenced in rufus.md";
+    if (!rufusContent.includes("lucrecia") && !rufusContent.includes("LUCRECIA")) {
+      return "LUCRECIA not referenced in rufus.md";
     }
 
     return true;

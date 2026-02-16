@@ -1,6 +1,6 @@
 ![SHINRA -- MAKO](logo.png)
 
-# SHINRA -- MAKO (Modular Agent Kit for Orchestration) v5.0
+# SHINRA -- MAKO (Modular Agent Kit for Orchestration) v6.1
 
 > *"Le pouvoir n'est rien sans controle."* -- Rufus Shinra
 
@@ -22,7 +22,8 @@ Plugin Claude Code -- systeme multi-agents incarne par le personnel de la Shinra
 | Elena | Turk (rookie) | **Tester** -- securite, edge cases, stress tests | Sonnet |
 | Palmer | Dir. Programme Spatial | **Documenter** -- genere la doc, adaptee a la quality tier, commandes continues | Sonnet |
 | Rude | Turk | **Reviewer** -- review adversarial + validation de specs (dual-mode) | Sonnet |
-| Sephiroth | L'Ange Unique | **Debugger** -- auto-correction, meta-learning, soumet des PRs upstream. **VERROUILLE** | Opus |
+| Sephiroth | L'Ange Unique | **Debugger** -- diagnostic, correction, escalade meta-learning. **VERROUILLE** | Opus |
+| Lucrecia | Scientifique Shinra | **Meta-learning + Plugin Guardian** -- modifie les prompts agents, gere les modifications du plugin. **VERROUILLEE** | Opus |
 
 ### Sephiroth -- VERROUILLE
 
@@ -30,7 +31,12 @@ Sephiroth est dormant par defaut. Il ne s'active que si :
 - Un agent echoue 2+ fois
 - Rude rejette + le fix echoue
 - Bug complexe explicite
-- Modification du plugin MAKO
+
+### Lucrecia -- VERROUILLEE
+
+Lucrecia est dormante par defaut. Elle ne s'active que si :
+- Sephiroth signale une erreur recurrente (meta-learning)
+- L'utilisateur demande de modifier le plugin MAKO
 
 ### Duo Reno/Elena
 
@@ -186,7 +192,7 @@ Tseng produit `project-context.md` a la racine de chaque projet : tech stack, st
 
 ### Auto-Amelioration via PR
 
-Sephiroth ne se contente pas de corriger les erreurs -- il modifie les prompts des agents pour empecher la recurrence, puis soumet une **Pull Request** au repo upstream.
+Lucrecia modifie les prompts des agents quand Sephiroth identifie une erreur recurrente, puis soumet une **Pull Request** au repo upstream.
 
 ## Memoire Persistante (mcp-memory-service)
 
@@ -207,7 +213,7 @@ shinra-mako/
 ├── plugins/mako/
 │   ├── .claude-plugin/
 │   │   └── plugin.json
-│   ├── agents/               # 12 agents Shinra (.md avec frontmatter)
+│   ├── agents/               # 13 agents Shinra (.md avec frontmatter)
 │   │   ├── elena.md          # Security + Edge Case Testing
 │   │   ├── genesis.md        # UX/Design Lead (v5.0)
 │   │   ├── heidegger.md      # Scaffold (tier-adapted)
@@ -218,7 +224,8 @@ shinra-mako/
 │   │   ├── reno.md           # Unit + Integration Testing
 │   │   ├── rude.md           # Adversarial Review + Spec Validation
 │   │   ├── scarlet.md        # Discovery + Quality Tier + Elicitation + UX + Research
-│   │   ├── sephiroth.md      # Debugger + Meta-learning + PR upstream (LOCKED)
+│   │   ├── lucrecia.md        # Meta-learning + Plugin Guardian (LOCKED)
+│   │   ├── sephiroth.md      # Debugger + Root Cause Analysis (LOCKED)
 │   │   └── tseng.md          # Analyzer + Deep Scan + project-context.md
 │   ├── context/              # Orchestrateur + references
 │   │   ├── rufus.md          # Rufus prompt principal
@@ -257,9 +264,21 @@ shinra-mako/
 | `[doc]` | Palmer | Documentation |
 | `[fix]` | Hojo | Correction de bug |
 | `[refactor]` | Hojo | Restructuration |
-| `[meta]` | Sephiroth | Modification de prompt agent (branche + PR) |
+| `[meta]` | Lucrecia | Modification de prompt agent (branche + PR) |
 
 ## Changelog
+
+### v6.1.0 -- "Lucrecia's Awakening"
+- **Rename JENOVA -> Lucrecia** -- L'agent meta-learning/plugin guardian est renomme Lucrecia Crescent
+- **Marketplace-only writes** -- Suppression du dual-write cache+marketplace, ecriture uniquement dans le repo marketplace
+- **Version enforcement** -- Nouvelle regle obligatoire : toute modification doit incrementer la version dans les 3 fichiers (marketplace.json, plugin.json, README.md) en SemVer synchronise
+
+### v6.0.0 -- "Phase A"
+- MCP Memory Fallback (graceful degradation quand mcp-memory-service est indisponible)
+- Telemetry JSONL (hooks instrumentation)
+- CI/CD pipeline avec Vitest + coverage thresholds
+- ADRs (Vitest, CJS/ESM, JSONL telemetry, health-check, coverage threshold)
+- Comprehensive test suite (unit, integration, security, contracts)
 
 ### v5.0.0 -- "Reunion Protocol"
 - **12 agents** (ajout Genesis UX/Design Lead + Lazard DevOps/CI-CD)

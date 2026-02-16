@@ -513,7 +513,7 @@ describe('Regression: subagent-stop-memory.js -- nominal behavior (MCP healthy e
     const KNOWN_AGENTS = [
       'tseng', 'scarlet', 'genesis', 'reeve', 'heidegger',
       'lazard', 'hojo', 'reno', 'elena', 'palmer', 'rude',
-      'sephiroth', 'jenova',
+      'sephiroth', 'lucrecia',
     ];
 
     for (const agent of KNOWN_AGENTS) {

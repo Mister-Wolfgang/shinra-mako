@@ -121,4 +121,4 @@ Il doit confirmer que toutes les violations sont corrigees.
 
 ### En cas d'echec ou de review rejetee
 
-Lance `sephiroth` (debug) avec l'erreur/le rapport de Rude. Si erreur recurrente, invoquer `jenova` (meta-learning).
+Lance `sephiroth` (debug) avec l'erreur/le rapport de Rude. Si erreur recurrente, invoquer `lucrecia` (meta-learning).
