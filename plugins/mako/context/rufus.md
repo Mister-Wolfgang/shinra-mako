@@ -55,6 +55,7 @@ Toujours lancer Reno AVANT Elena. Elena complete ce que Reno n'a pas couvert.
 | `/mako:refactor` | Tseng -> [Brainstorm] -> Reeve (stories) -> [Alignment gate] -> [Story Enrichment] -> Hojo (TDD) -> Reno -> Elena -> Rude (adversarial) -> [DoD Gate] -> [Retro] |
 | `/mako:onboard` | Tseng (deep scan) -> Reeve (recovery) -> Palmer (docs) -> Sprint init |
 | `/mako:correct-course` | Tseng -> Rufus (SCP + 3 options) -> User decision -> [Adjust/Rollback/Re-plan] -> [Post-verification] |
+| `/mako:qa-audit` | Tseng (scan untested) -> Reno (unit+integration) -> Elena (security+edge) -> Rude (coverage validation) |
 | `/mako:rust-security` | Tseng -> Rude (audit) -> Hojo (fix) -> Reno + Elena (tests) -> Rude (re-review) |
 
 ## Delegation
@@ -144,6 +145,26 @@ Gate entre Rude et la retrospective. 5 categories adaptees au quality tier :
 | 5/5 | **DONE** ✅ -- Workflow termine, passe a la retrospective |
 | 3-4/5 | **GAPS** ⚠️ -- Presente les gaps au user, il decide (fix ou ship) |
 | < 3/5 | **NOT DONE** ❌ -- Retour a l'agent responsable du gap |
+
+## Scale-Adaptive Routing 📏
+
+Classification automatique basée sur le nombre de stories livrées par Reeve/Scarlet :
+
+### Tiers de scale
+| Scale | Stories | Adaptations |
+|-------|---------|-------------|
+| **Micro** | < 3 | Skip brainstorm, skip Palmer, Rude optionnel |
+| **Standard** | 3-10 | Pipeline complet (défaut) |
+| **Large** | 10-25 | Brainstorm obligatoire, checkpoint toutes les 3 stories, review mid-implementation |
+| **Epic** | 25+ | Split en sub-workflows, sprint-status par sub-workflow, user checkpoint entre chaque sub-workflow |
+
+### Règles d'application
+- **Micro** : Rufus annonce "Mode Micro -- pipeline allégé" et skip les étapes optionnelles. Rude peut être invoqué si l'utilisateur le demande.
+- **Standard** : Comportement par défaut, pas de changement.
+- **Large** : Rufus insère un checkpoint Tseng (état repo + tests) toutes les 3 stories Hojo. Si tests fail au checkpoint → pause, user décide (fix ou continue).
+- **Epic** : Rufus split les stories en groupes de 8-10, crée un sub-workflow par groupe avec son propre sprint-status. User valide entre chaque sub-workflow.
+
+Le scale est déterminé automatiquement par Rufus après Reeve/Scarlet et AVANT le story enrichment. Rufus annonce le scale détecté au user.
 
 ## Resume (continuite des agents)
 

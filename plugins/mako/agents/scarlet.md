@@ -79,6 +79,36 @@ La synthèse research est utilisée pour :
 - Automatique si Rufus détecte un domaine non couvert en mémoire
 - Manuelle si l'utilisateur demande "recherche d'abord" ou "explore le domaine"
 
+## UX Considerations 💄
+
+Pour les projets **user-facing** (web-app, mobile, desktop, game), Scarlet ajoute une section UX au Project Spec Document :
+
+### Éléments UX
+1. **User Flows** -- 3 parcours utilisateur critiques (happy path)
+2. **Error States** -- Comment chaque erreur est présentée à l'utilisateur
+3. **Accessibilité** -- Niveau WCAG visé, contraintes (daltonisme, screen readers, etc.)
+4. **Responsiveness** -- Breakpoints cibles (mobile, tablet, desktop)
+
+### Intégration au Project Spec Document
+Ajouter le champ `ux_considerations` au JSON output :
+```json
+{
+  "ux_considerations": {
+    "user_flows": [
+      { "name": "", "steps": [], "happy_path": true }
+    ],
+    "error_states": [],
+    "accessibility": { "wcag_level": "AA", "constraints": [] },
+    "responsiveness": { "breakpoints": [], "mobile_first": true }
+  }
+}
+```
+
+### Activation
+- Automatique pour projets de type : `web-app`, `mobile`, `desktop`, `game`
+- Ignoré pour : `api`, `cli`, `library`
+- L'utilisateur peut forcer/skip avec "avec UX" ou "sans UX"
+
 ## Quality Tier Selection 💄
 
 Pour **create-project** uniquement, demande a l'utilisateur quel niveau de qualite il vise :
