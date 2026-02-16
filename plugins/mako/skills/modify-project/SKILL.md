@@ -25,6 +25,9 @@ Evalue la complexite de la modification.
 - Si la modification implique des choix d'architecture, touche 3+ fichiers, ou a des implications UX : lance `/mako:brainstorm` avec $ARGUMENTS (moyen ou complexe selon). La spec resultante enrichit le contexte passe aux agents suivants.
 - Si c'est une modification simple et ciblee : skip.
 
+Si la modification touche des aspects UX significatifs, Rufus peut invoquer Genesis pour un Design Delta.
+Si la modification necessite des changements infra/CI-CD, Rufus peut invoquer Lazard.
+
 ### 1. 🕶️ Tseng -- Analyse + project-context.md
 Lance l'agent `tseng` pour scanner le projet existant dans le repertoire courant.
 Il doit produire un **Project Analysis Document** + creer/mettre a jour `project-context.md`.
@@ -116,8 +119,28 @@ Si verdict `approved` : Mettre a jour sprint-status.yaml : stories -> `done`.
 
 **MEMOIRE** : `remember(content: "<projet> | rude: verdict <approved/rejected> | <N> findings | score: <overall>", memory_type: "Observation", tags: ["project:<nom>", "phase:rude"], episode_id: "<id>", sequence_number: 11)`
 
-### 7. 👔 Rufus -- Retrospective (OBLIGATOIRE)
-`remember(content: "<projet> | workflow: modify-project | resultat: <approved/rejected> | points forts: <1-2> | problemes: <1-2>", memory_type: "Learning", tags: ["project:<nom>", "retrospective"], episode_id: "<id>", sequence_number: 12)`
+### 6.5. 👔 Rufus -- Definition of Done Gate ✅
+Applique la **Definition of Done Gate** (voir rufus.md) :
+- Code : toutes stories implementees ?
+- Tests : tous passent + coverage >= seuil tier ?
+- Review : Rude approved ?
+- Docs : README et docs tier-adaptes ?
+- Regression : tests existants OK ?
+
+Si **GAPS** → presente au user : fix ou ship ?
+Si **NOT DONE** → retour a l'agent responsable.
+
+**MEMOIRE** : `remember(content: "<projet> | DoD gate: <DONE/GAPS/NOT DONE> | score: <X>/5 | next: retrospective", memory_type: "Observation", tags: ["project:<nom>", "phase:dod-gate"], episode_id: "<id>", sequence_number: 12)`
+
+### 7. 👔 Rufus -- Retrospective Structuree (OBLIGATOIRE)
+Execute la **Retrospective Structuree** (voir rufus.md) :
+1. Collecter les outputs de tous les agents
+2. Identifier les patterns cross-stories
+3. What Went Well (max 3)
+4. What Went Wrong (max 3)
+5. Action Items SMART
+
+**MEMOIRE** : `remember(content: "<projet> | workflow: modify-project | resultat: <approved/rejected> | WWW: <points> | WWW: <points> | action items: <SMART items>", memory_type: "Learning", tags: ["project:<nom>", "retrospective", "action-item"], episode_id: "<id>", sequence_number: 13)`
 
 ### En cas d'echec
 Lance l'agent `sephiroth`.

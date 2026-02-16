@@ -25,6 +25,36 @@ Apres CHAQUE phase terminee, execute un `remember()`. Ne JAMAIS skipper cette et
 
 **Ne pas utiliser pour** : bugs simples (`fix-bug`), features additionnelles (`add-feature`), refactoring planifie (`refactor`).
 
+## Sprint Change Proposal (SCP) 📋
+
+Chaque correction de cap produit un SCP formel :
+
+### Format
+```yaml
+scp:
+  id: "SCP-<N>"
+  problem_statement: ""
+  root_cause_classification: "spec-incomplete | archi-manquee | deviation | dep-externe | scope-creep"
+  impact_analysis:
+    stories_affected: []
+    files_affected: []
+    dependencies_impacted: []
+    tests_affected: []
+  scope_routing: "minor | major | architectural"
+```
+
+### Scope Routing
+| Scope | Action | Critere |
+|-------|--------|---------|
+| **Minor** 🔧 | Adjust only | < 3 stories affectees, pas de changement d'archi |
+| **Major** ⚠️ | Adjust OU Re-plan (user choisit) | 3-7 stories affectees OU changement d'interface |
+| **Architectural** 🏗️ | Re-plan obligatoire | > 7 stories OU changement fondamental de design |
+
+### Post-correction
+- Tseng verifie l'etat post-correction
+- Mettre a jour `sprint-status.yaml` (stories impactees)
+- Stocker le SCP en memoire avec tag `course-correction`
+
 ## Workflow
 
 ### 1. 🕶️ Tseng -- Re-analyse
@@ -44,7 +74,12 @@ Tseng doit produire un **Current State Analysis** incluant :
 
 ### 2. 👔 Rufus -- Evaluation d'impact
 
-Analyse le rapport de Tseng et determine les 3 options :
+Analyse le rapport de Tseng et determine les 3 options.
+
+Produire un **Sprint Change Proposal (SCP)** avec le format ci-dessus. Le scope routing determine les options disponibles :
+- **Minor** → seul Adjust propose
+- **Major** → Adjust + Re-plan
+- **Architectural** → Re-plan obligatoire (mais proposer Rollback comme alternative)
 
 | Type | Description | Quand |
 |------|-------------|-------|
@@ -94,7 +129,7 @@ Quelle option ? (A/B/C)
 **Si Re-plan 🏗️** :
 1. Lance `scarlet` avec le contexte du probleme + specs initiales pour produire un nouveau Spec Delta
 2. Lance `reeve` avec le nouveau spec pour re-design de l'architecture/stories
-3. Applique le **Readiness Gate** (voir rufus.md)
+3. Applique le **Alignment Gate** (voir rufus.md)
 4. Lance `hojo` avec les nouvelles stories (TDD)
 5. Lance `reno` -> `elena` -> `rude` pour validation
 
@@ -112,3 +147,5 @@ Si l'option choisie echoue :
 3. **Documenter** -- Stocker en memoire : probleme + option choisie + resultat.
 4. **Re-plan = full pipeline** -- Ne pas skipper les etapes.
 5. **Rollback = confirmation** -- Ne JAMAIS executer git reset/revert sans confirmation explicite.
+6. **SCP obligatoire** -- Chaque correction de cap = 1 SCP stocke en memoire.
+7. **Post-verification** -- Toujours verifier avec Tseng + mettre a jour sprint-status.yaml apres correction.

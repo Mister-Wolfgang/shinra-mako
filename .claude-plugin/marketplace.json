@@ -5,14 +5,14 @@
   },
   "metadata": {
     "description": "MAKO agent system powered by Shinra personnel for Claude Code",
-    "version": "4.1.0"
+    "version": "5.0.0"
   },
   "plugins": [
     {
       "name": "mako",
       "source": "./plugins/mako",
-      "description": "MAKO (Modular Agent Kit for Orchestration) -- 10 specialized agents with Shinra personalities for creating and managing projects from A to Z",
-      "version": "4.1.0",
+      "description": "MAKO (Modular Agent Kit for Orchestration) -- 12 specialized agents with Shinra personalities for creating and managing projects from A to Z",
+      "version": "5.0.0",
       "keywords": ["agents", "project-creation", "ff7", "shinra", "mako", "workflow", "automation"],
       "category": "development"
     }

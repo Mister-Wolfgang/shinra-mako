@@ -66,3 +66,26 @@ Apres validation utilisateur, compile une **spec synthetique** contenant :
 - **Agents concernes** : qui intervient dans le pipeline d'execution
 
 Cette spec sera passee comme input au pipeline qui suit (create-project, add-feature, etc.).
+
+### Phase 4 -- Party Mode 🎉 (optionnel, user-triggered)
+
+**Activation** : uniquement si l'utilisateur demande explicitement "party mode", "debate", ou "challenge round". Ou si Rufus détecte des désaccords non résolus en Phase 2.
+
+Après la synthèse standard, rounds de challenge supplémentaires :
+
+#### Round 2 -- Cross-Challenge
+Chaque agent qui a participé en Phase 1 :
+- Identifie **1 faiblesse** dans la proposition d'un autre agent
+- Propose **1 alternative** à cette faiblesse
+
+Lancer les agents en parallèle avec le prompt :
+> "Mode PARTY. Tu as vu la synthèse. Identifie 1 faiblesse dans la proposition de [autre agent] et propose 1 alternative. 3 lignes max."
+
+#### Round 3 -- Arbitrage
+Rufus compile les challenges et présente à l'utilisateur :
+- Résumé des faiblesses identifiées
+- Alternatives proposées
+- Recommandation de Rufus (basée sur les consensus)
+- L'utilisateur tranche les points restants
+
+**Cout** : ~2x le coût du brainstorm standard. Réservé aux décisions architecturales majeures.
