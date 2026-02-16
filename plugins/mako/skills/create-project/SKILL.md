@@ -176,5 +176,5 @@ Execute la **Retrospective Structuree** (voir rufus.md) :
 **MEMOIRE** : `store_memory(content: "<projet> | workflow: create-project | resultat: <approved/rejected> | WWW: <points> | WWW: <points> | action items: <SMART items>", memory_type: "learning", tags: ["project:<nom>", "retrospective", "action-item"])`
 
 ### En cas d'echec ou de review rejetee
-Lance l'agent `sephiroth` avec l'erreur/le rapport de Rude.
-Il analysera et proposera un fix a appliquer.
+Lance l'agent `sephiroth` (debug) avec l'erreur/le rapport de Rude.
+Il analysera la cause racine et proposera un fix. Si l'erreur est recurrente, Sephiroth signalera a Rufus d'invoquer `jenova` (meta-learning).

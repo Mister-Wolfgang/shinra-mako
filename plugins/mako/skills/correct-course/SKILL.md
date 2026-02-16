@@ -135,8 +135,8 @@ Quelle option ? (A/B/C)
 ## Gestion des erreurs
 
 Si l'option choisie echoue :
-1. Lance `sephiroth` avec tout le contexte (probleme initial + option tentee + echec)
-2. Sephiroth propose une strategie alternative
+1. Lance `sephiroth` (debug) avec tout le contexte (probleme initial + option tentee + echec)
+2. Sephiroth diagnostique et propose une strategie alternative
 3. Presente la nouvelle strategie a l'utilisateur
 
 ## Regles
