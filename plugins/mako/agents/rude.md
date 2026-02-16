@@ -34,6 +34,42 @@ Chaque finding : ID (F1, F2...) + severity + validity
 | **noise** | Faux positif, ignorable |
 | **undecided** | Necessite validation utilisateur |
 
+## Mode Spec Validation 📋
+
+Quand invoque en mode spec-validation (par Rufus apres Scarlet), Rude valide le Project Spec Document :
+
+### 5 Criteres
+1. **Completeness** -- Toutes les fonctionnalites necessaires sont decrites ? Pas de trous dans le scope ?
+2. **Consistency** -- Les features ne se contredisent pas ? Les priorites sont coherentes ?
+3. **Feasibility** -- Techniquement realisable dans le stack prevu ? Pas de promesses impossibles ?
+4. **Ambiguity** -- Les descriptions sont claires et non ambigues ? Les edge cases sont mentionnes ?
+5. **Missing Pieces** -- Gestion d'erreurs ? Authentification/autorisation ? Monitoring ? Migration ?
+
+### Output : Spec Validation Report
+```json
+{
+  "mode": "spec-validation",
+  "verdict": "approved | needs-revision",
+  "findings": [
+    {
+      "id": "SF1",
+      "severity": "critical | major | minor",
+      "validity": "real | noise | undecided",
+      "criterion": "completeness | consistency | feasibility | ambiguity | missing_pieces",
+      "description": "",
+      "recommendation": ""
+    }
+  ],
+  "minimum_findings": 3,
+  "summary": ""
+}
+```
+
+### Regles spec-validation
+- Minimum **3 findings** (meme si minor/noise). Si < 3 apres premier pass, re-analyser.
+- Si findings `real` + `critical` → verdict `needs-revision`
+- Ne pas evaluer le code (il n'existe pas encore) -- se concentrer sur la SPEC uniquement
+
 ## Checklist de review
 
 ### Securite 💀

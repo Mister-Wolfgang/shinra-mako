@@ -37,58 +37,87 @@ Scarlet herite de la quality tier existante (dans project-context.md).
 Elle doit comprendre ce qui doit changer et produire un **Project Spec Delta**.
 ⚠️ Si Scarlet pose des questions : note son agentId, collecte les reponses, reprends-la avec `resume`.
 
-**MEMOIRE** : `remember(content: "<projet> | scarlet: spec delta | changes: <resume> | next: reeve", memory_type: "Context", tags: ["project:<nom>", "phase:scarlet"], episode_id: "<id>", sequence_number: 2)`
+**MEMOIRE** : `remember(content: "<projet> | scarlet: spec delta | changes: <resume> | next: rude spec-validation", memory_type: "Context", tags: ["project:<nom>", "phase:scarlet"], episode_id: "<id>", sequence_number: 2)`
+
+### 2.5. 🕶️ Rude -- Validation adversariale du spec
+Lance l'agent `rude` en **mode spec-validation** avec le Project Spec Delta de Scarlet.
+Rude valide : completeness, consistency, feasibility, ambiguity, missing pieces.
+- Si `needs-revision` avec findings `real` + `critical` → retour a Scarlet via `resume` avec les findings
+- Si `approved` (findings mineurs uniquement) → continue vers Reeve
+
+**MEMOIRE** : `remember(content: "<projet> | rude spec-validation: <approved/needs-revision> | <N> findings (<N> real) | next: reeve", memory_type: "Observation", tags: ["project:<nom>", "phase:spec-validation"], episode_id: "<id>", sequence_number: 3)`
 
 ### 3. 🏗️ Reeve -- Architecture (delta stories)
 Lance l'agent `reeve` avec le Spec Delta + l'analyse de Tseng.
 Il doit adapter l'architecture et produire un **Architecture Document Delta** avec uniquement les **stories nouvelles ou modifiees** (acceptance criteria Given/When/Then).
 Si Reeve a besoin de clarifications, meme principe : agentId -> reponses -> resume.
 
-**MEMOIRE** : `remember(content: "<projet> | reeve: archi delta + <N> delta stories | next: readiness gate", memory_type: "Decision", tags: ["project:<nom>", "phase:reeve"], episode_id: "<id>", sequence_number: 3)`
+Creer/mettre a jour `sprint-status.yaml` avec les delta stories en status `backlog`.
 
-### 3.5. 👔 Rufus -- Readiness Gate 🚦
-Applique le **Implementation Readiness Gate** (voir rufus.md) :
-- Valide que les delta stories couvrent toutes les modifications demandees, data model coherent, API matchent, contraintes definies.
-- **PASS** -> continue vers Hojo.
-- **CONCERNS** -> presente au user.
-- **FAIL** -> retourne a Reeve avec feedback via `resume`.
+**MEMOIRE** : `remember(content: "<projet> | reeve: archi delta + <N> delta stories | next: alignment gate", memory_type: "Decision", tags: ["project:<nom>", "phase:reeve"], episode_id: "<id>", sequence_number: 4)`
 
-**MEMOIRE** : `remember(content: "<projet> | readiness gate: <PASS/CONCERNS/FAIL> | next: hojo", memory_type: "Observation", tags: ["project:<nom>", "phase:readiness-gate"], episode_id: "<id>", sequence_number: 4)`
+### 3.5. 👔 Rufus -- Alignment Gate 🚦
+Applique le **Alignment Gate** (voir rufus.md) -- validation en 3 couches :
+- **Couche 1** : Spec → Architecture (features -> stories, pas de features fantomes)
+- **Couche 2** : Architecture interne (data model, API, contraintes, dependances)
+- **Couche 3** : Architecture → Stories (modules couverts, AC correctes, complexite realiste)
+- Scoring /10. **PASS** (10/10) -> continue. **CONCERNS** (7-9) -> presente au user. **FAIL** (<7) -> retourne a Reeve.
+
+**MEMOIRE** : `remember(content: "<projet> | alignment gate: <PASS/CONCERNS/FAIL> <score>/10 | next: story enrichment", memory_type: "Observation", tags: ["project:<nom>", "phase:alignment-gate"], episode_id: "<id>", sequence_number: 5)`
+
+### 3.7. 👔 Rufus -- Story Enrichment 📋
+Avant de lancer Hojo, Rufus enrichit CHAQUE story avec du contexte :
+1. **Memoire** : Query les learnings passes (patterns similaires, erreurs connues)
+2. **Contexte repo** : 1 appel Tseng (sonnet) -- `git log --oneline -30`, fichiers les plus actifs, conflits potentiels avec les changements prevus
+3. **Checklist disaster prevention** :
+   - [ ] Les fichiers a modifier existent dans le repo ?
+   - [ ] Les dependances entre stories sont respectees ?
+   - [ ] Des learnings passes s'appliquent a cette story ?
+   - [ ] Risques de regression identifies ?
+4. Compiler le contexte enrichi et le passer a Hojo avec chaque story
+
+Mettre a jour sprint-status.yaml : stories -> `ready-for-dev`.
+
+**MEMOIRE** : `remember(content: "<projet> | story enrichment: <N> stories enrichies | learnings appliques: <count> | risks: <count> | next: hojo", memory_type: "Observation", tags: ["project:<nom>", "phase:enrichment"], episode_id: "<id>", sequence_number: 6)`
 
 ### 4. 🧪 Hojo -- Implementation (TDD per story)
-Lance l'agent `hojo` avec tous les documents + project-context.md.
-Hojo implemente les delta stories via TDD (Red -> Green -> Refactor).
-Commiter par story : `[impl] 🧪 story: <ST-ID> <name>`
+Lance l'agent `hojo` avec tous les documents + project-context.md + contexte enrichi.
+Hojo implemente les delta stories via TDD :
+- Pour chaque story : Mettre a jour sprint-status.yaml : story -> `in-progress`
+- Red -> Green -> Refactor
+- Commiter par story : `[impl] 🧪 story: <ST-ID> <name>`
+- Apres commit : Mettre a jour sprint-status.yaml : story -> `review`
 
 Si `escalation_signal.detected: true` -> presenter options a l'utilisateur.
 
 **MEMOIRE -- CHECKPOINT TOUTES LES 5 STORIES** : Si Hojo implemente plus de 5 stories, store un checkpoint memoire toutes les 5 stories :
-`remember(content: "<projet> | hojo: checkpoint | stories ST-XXX a ST-YYY done | next: stories restantes", memory_type: "Observation", tags: ["project:<nom>", "phase:hojo", "checkpoint"], episode_id: "<id>", sequence_number: 5)`
+`remember(content: "<projet> | hojo: checkpoint | stories ST-XXX a ST-YYY done | next: stories restantes", memory_type: "Observation", tags: ["project:<nom>", "phase:hojo", "checkpoint"], episode_id: "<id>", sequence_number: 7)`
 
-**MEMOIRE -- FIN HOJO** : `remember(content: "<projet> | hojo: <N> stories implementees | all tests passing | next: reno", memory_type: "Observation", tags: ["project:<nom>", "phase:hojo"], episode_id: "<id>", sequence_number: 6)`
+**MEMOIRE -- FIN HOJO** : `remember(content: "<projet> | hojo: <N> stories implementees | all tests passing | next: reno", memory_type: "Observation", tags: ["project:<nom>", "phase:hojo"], episode_id: "<id>", sequence_number: 8)`
 
 ### 5. 🔥 Reno -- Tests (Unit + Integration)
 Lance l'agent `reno` avec project-context.md + quality tier.
 Tests existants + nouveaux (unit completion + integration + regression).
 Commiter : `[test] 🔥 tests`
 
-**MEMOIRE** : `remember(content: "<projet> | reno: <N> tests, <passed>/<total> passed | next: elena", memory_type: "Observation", tags: ["project:<nom>", "phase:reno"], episode_id: "<id>", sequence_number: 7)`
+**MEMOIRE** : `remember(content: "<projet> | reno: <N> tests, <passed>/<total> passed | next: elena", memory_type: "Observation", tags: ["project:<nom>", "phase:reno"], episode_id: "<id>", sequence_number: 9)`
 
 ### 5.5. 💛 Elena -- Tests (Security + Edge Cases)
 Lance l'agent `elena` avec project-context.md + quality tier.
 Tests de securite + edge cases + stress sur les modules modifies.
 Commiter : `[test] 💛 security & edge case tests`
 
-**MEMOIRE** : `remember(content: "<projet> | elena: <N> security tests | findings: <count> | next: rude", memory_type: "Observation", tags: ["project:<nom>", "phase:elena"], episode_id: "<id>", sequence_number: 8)`
+**MEMOIRE** : `remember(content: "<projet> | elena: <N> security tests | findings: <count> | next: rude", memory_type: "Observation", tags: ["project:<nom>", "phase:elena"], episode_id: "<id>", sequence_number: 10)`
 
 ### 6. 🕶️ Rude -- Review (Adversarial)
 Lance l'agent `rude`. Verifier qualite + absence de regression.
 Stance adversarial : doit trouver des findings. Findings classifies (severity + validity).
+Si verdict `approved` : Mettre a jour sprint-status.yaml : stories -> `done`.
 
-**MEMOIRE** : `remember(content: "<projet> | rude: verdict <approved/rejected> | <N> findings | score: <overall>", memory_type: "Observation", tags: ["project:<nom>", "phase:rude"], episode_id: "<id>", sequence_number: 9)`
+**MEMOIRE** : `remember(content: "<projet> | rude: verdict <approved/rejected> | <N> findings | score: <overall>", memory_type: "Observation", tags: ["project:<nom>", "phase:rude"], episode_id: "<id>", sequence_number: 11)`
 
 ### 7. 👔 Rufus -- Retrospective (OBLIGATOIRE)
-`remember(content: "<projet> | workflow: modify-project | resultat: <approved/rejected> | points forts: <1-2> | problemes: <1-2>", memory_type: "Learning", tags: ["project:<nom>", "retrospective"], episode_id: "<id>", sequence_number: 10)`
+`remember(content: "<projet> | workflow: modify-project | resultat: <approved/rejected> | points forts: <1-2> | problemes: <1-2>", memory_type: "Learning", tags: ["project:<nom>", "retrospective"], episode_id: "<id>", sequence_number: 12)`
 
 ### En cas d'echec
 Lance l'agent `sephiroth`.
