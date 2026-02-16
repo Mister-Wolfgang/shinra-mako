@@ -16,6 +16,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const { isMemoryServiceHealthy, memoryFallbackMessage } = require("./lib/memory-fallback");
 
 function safeRead(filePath) {
   try {
@@ -89,6 +90,15 @@ function main() {
         .join(", ");
     }
 
+    // ST-9: Check MCP Memory health for fallback
+    let memoryWarning = "";
+    const memoryHealthy = isMemoryServiceHealthy();
+    if (!memoryHealthy) {
+      const fallbackMsg = memoryFallbackMessage("pre-compact-save");
+      process.stderr.write(`[pre-compact] WARNING: ${fallbackMsg}\n`);
+      memoryWarning = `\n\n${fallbackMsg}`;
+    }
+
     // Build the recovery message
     const lines = [
       "COMPACTAGE IMMINENT -- SAUVEGARDE CONTEXTE",
@@ -107,7 +117,7 @@ function main() {
       JSON.stringify({
         hookSpecificOutput: {
           hookEventName: "PreCompact",
-          additionalContext: lines.join("\n"),
+          additionalContext: lines.join("\n") + memoryWarning,
         },
       })
     );

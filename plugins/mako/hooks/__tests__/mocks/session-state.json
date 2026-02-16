@@ -1,0 +1,17 @@
+{
+  "last_compaction": "2026-02-16T12:00:00.000Z",
+  "sprint": {
+    "workflow": "create-project",
+    "status": "active",
+    "current_phase": "hojo",
+    "next_phase": "reno",
+    "quality_tier": "Standard",
+    "scale": "Standard"
+  },
+  "active_agents": {
+    "hojo": "agent-mock-001",
+    "tseng": "agent-mock-002"
+  },
+  "pending_decisions": [],
+  "notes": "Mock session state for testing."
+}

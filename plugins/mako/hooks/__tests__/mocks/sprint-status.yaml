@@ -1,0 +1,15 @@
+sprint:
+  workflow: "create-project"
+  status: "active"
+  current_phase: "hojo"
+  next_phase: "reno"
+  quality_tier: "Standard"
+  scale: "Standard"
+
+stories:
+  - id: "ST-1"
+    name: "Test Infrastructure Setup"
+    status: "in-progress"
+  - id: "ST-2"
+    name: "Core Logic Implementation"
+    status: "backlog"

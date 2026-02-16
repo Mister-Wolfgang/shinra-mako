@@ -17,6 +17,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const { isMemoryServiceHealthy, memoryFallbackMessage } = require("./lib/memory-fallback");
 
 // Basic pipeline routing table (after agent X -> suggest agent Y)
 const ROUTING = {
@@ -71,6 +72,15 @@ function main() {
       } catch {}
     }
 
+    // ST-9: Check MCP Memory health for fallback
+    let memoryWarning = "";
+    const memoryHealthy = isMemoryServiceHealthy();
+    if (!memoryHealthy) {
+      const fallbackMsg = memoryFallbackMessage("subagent-stop-memory");
+      process.stderr.write(`[subagent-stop] WARNING: ${fallbackMsg}\n`);
+      memoryWarning = `\n\n${fallbackMsg}`;
+    }
+
     const lines = [
       `Agent '${agentName}' a termine. Resultat recu.${phaseInfo}`,
       "",
@@ -87,7 +97,7 @@ function main() {
       JSON.stringify({
         hookSpecificOutput: {
           hookEventName: "SubagentStop",
-          additionalContext: lines.join("\n"),
+          additionalContext: lines.join("\n") + memoryWarning,
         },
       })
     );

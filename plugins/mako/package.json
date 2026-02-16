@@ -1,0 +1,22 @@
+{
+  "name": "@shinra/mako-hooks-tests",
+  "version": "6.0.0-alpha",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "test:coverage": "vitest run --coverage",
+    "test:bench": "vitest bench",
+    "ci": "vitest run --coverage --reporter=verbose"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^1.2.0",
+    "ajv": "^8.18.0",
+    "ajv-formats": "^3.0.1",
+    "vitest": "^1.2.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

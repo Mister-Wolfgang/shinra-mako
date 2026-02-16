@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://shinra.mako/contracts/telemetry.schema.json",
+  "title": "MAKO Telemetry Event",
+  "description": "Schema for telemetry JSONL events emitted by MAKO hooks.",
+  "type": "object",
+  "required": ["timestamp", "event", "hook"],
+  "properties": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "event": {
+      "type": "string",
+      "enum": ["hook_start", "hook_end", "hook_error", "memory_fallback"]
+    },
+    "hook": {
+      "type": "string",
+      "minLength": 1
+    },
+    "duration_ms": {
+      "type": "number",
+      "minimum": 0
+    },
+    "error": {
+      "type": "string"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

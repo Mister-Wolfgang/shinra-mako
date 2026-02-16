@@ -1,0 +1,116 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://shinra.mako/contracts/hooks-io.schema.json",
+  "title": "MAKO Hooks I/O Schemas",
+  "description": "Contract schemas for all MAKO hook input/output formats. Based on observed reality of hooks v5.1.0.",
+  "definitions": {
+    "SessionStartOutput": {
+      "type": "object",
+      "required": ["hookSpecificOutput"],
+      "properties": {
+        "hookSpecificOutput": {
+          "type": "object",
+          "required": ["hookEventName"],
+          "properties": {
+            "hookEventName": {
+              "type": "string",
+              "const": "SessionStart"
+            },
+            "statusMessage": {
+              "type": "string"
+            },
+            "additionalContext": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "UserPromptSubmitOutput": {
+      "type": "object",
+      "required": ["result"],
+      "properties": {
+        "result": {
+          "type": "string",
+          "enum": ["continue", "block"]
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "PreToolUseOutput": {
+      "type": "object",
+      "required": ["decision"],
+      "properties": {
+        "decision": {
+          "type": "string",
+          "enum": ["allow", "block"]
+        },
+        "reason": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "SubagentStopInput": {
+      "type": "object",
+      "properties": {
+        "agent_type": {
+          "type": "string",
+          "pattern": "^mako:\\w+$"
+        },
+        "agentType": {
+          "type": "string",
+          "pattern": "^mako:\\w+$"
+        }
+      },
+      "additionalProperties": true
+    },
+    "SubagentStopOutput": {
+      "type": "object",
+      "required": ["hookSpecificOutput"],
+      "properties": {
+        "hookSpecificOutput": {
+          "type": "object",
+          "required": ["hookEventName", "additionalContext"],
+          "properties": {
+            "hookEventName": {
+              "type": "string",
+              "const": "SubagentStop"
+            },
+            "additionalContext": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "PreCompactOutput": {
+      "type": "object",
+      "required": ["hookSpecificOutput"],
+      "properties": {
+        "hookSpecificOutput": {
+          "type": "object",
+          "required": ["hookEventName", "additionalContext"],
+          "properties": {
+            "hookEventName": {
+              "type": "string",
+              "const": "PreCompact"
+            },
+            "additionalContext": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

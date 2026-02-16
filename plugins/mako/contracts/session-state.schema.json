@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://shinra.mako/contracts/session-state.schema.json",
+  "title": "MAKO Session State",
+  "description": "Schema for .mako-session-state.json written by pre-compact-save.js.",
+  "type": "object",
+  "required": ["last_compaction", "sprint", "active_agents", "pending_decisions", "notes"],
+  "properties": {
+    "last_compaction": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "sprint": {
+      "type": "object",
+      "properties": {
+        "workflow": { "type": "string" },
+        "status": { "type": "string" },
+        "current_phase": { "type": "string" },
+        "next_phase": { "type": "string" },
+        "quality_tier": { "type": "string" },
+        "scale": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "active_agents": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "pending_decisions": {
+      "type": "array",
+      "items": {
+        "type": ["string", "object"]
+      }
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

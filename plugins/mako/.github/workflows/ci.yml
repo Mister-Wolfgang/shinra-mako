@@ -1,0 +1,219 @@
+# =============================================================================
+# MAKO Plugin CI/CD Pipeline -- ST-7
+#
+# 3 parallel jobs: test, benchmark, contract-validation
+# Post-merge health check on main with auto-rollback
+# =============================================================================
+
+name: MAKO CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# ---------------------------------------------------------------------------
+# Jobs
+# ---------------------------------------------------------------------------
+
+jobs:
+  # =========================================================================
+  # Job 1: Test Suite + Coverage
+  # =========================================================================
+  test:
+    name: Tests + Coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests with coverage
+        run: npx vitest run --coverage --reporter=verbose
+
+      # Coverage thresholds are enforced by vitest.config.js:
+      #   lines:      70%
+      #   functions:  70%
+      #   statements: 70%
+      #   branches:   65%
+      # vitest exits non-zero if thresholds are not met.
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 14
+
+  # =========================================================================
+  # Job 2: Benchmark (Telemetry Overhead)
+  # =========================================================================
+  benchmark:
+    name: Benchmark - Telemetry Overhead
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run performance tests (overhead < 5ms)
+        run: npx vitest run -t "Performance" --reporter=verbose
+
+      # The telemetry.test.js Performance suite asserts:
+      #   - logEvent() completes in under 5ms (avg over 20 iterations)
+      #   - wrapHook() adds less than 5ms overhead (avg over 10 iterations)
+      # These are hard assertions -- test fails if threshold exceeded.
+
+      # Additional safety: detect >30% regression via timing comparison.
+      # We capture timing output and compare in the verify step.
+      - name: Run benchmark with timing capture
+        id: bench_timing
+        run: |
+          START_TIME=$(date +%s%N)
+          npx vitest run -t "Performance" --reporter=json > bench-results.json 2>&1 || true
+          END_TIME=$(date +%s%N)
+          ELAPSED_MS=$(( (END_TIME - START_TIME) / 1000000 ))
+          echo "elapsed_ms=$ELAPSED_MS" >> "$GITHUB_OUTPUT"
+          echo "Benchmark suite completed in ${ELAPSED_MS}ms"
+
+      - name: Verify no >30% performance regression
+        run: |
+          # Parse the bench results for Performance suite duration
+          # The 5ms per-call threshold is enforced by the test assertions.
+          # This step adds a macro-level sanity check: if the entire
+          # Performance suite takes >30% longer than the 10s baseline,
+          # something is seriously wrong.
+          ELAPSED=${{ steps.bench_timing.outputs.elapsed_ms }}
+          BASELINE_MS=10000
+          THRESHOLD_MS=$(( BASELINE_MS * 130 / 100 ))
+          echo "Elapsed: ${ELAPSED}ms, Baseline: ${BASELINE_MS}ms, Threshold (130%): ${THRESHOLD_MS}ms"
+          if [ "$ELAPSED" -gt "$THRESHOLD_MS" ]; then
+            echo "::error::Performance regression detected! Suite took ${ELAPSED}ms (threshold: ${THRESHOLD_MS}ms)"
+            exit 1
+          fi
+          echo "Performance within acceptable range."
+
+      - name: Upload benchmark results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: bench-results.json
+          retention-days: 14
+
+  # =========================================================================
+  # Job 3: Contract Validation
+  # =========================================================================
+  contract-validation:
+    name: Contract Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate hook contracts against JSON schemas
+        run: npx vitest run -t "Contract:" --reporter=verbose
+
+  # =========================================================================
+  # Job 4: Health Check (main only, post-merge)
+  # =========================================================================
+  health-check:
+    name: Health Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [test, benchmark, contract-validation]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run health check
+        id: health
+        run: |
+          node scripts/health-check.js | tee health-report.json
+        continue-on-error: true
+
+      - name: Upload health report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: health-report
+          path: health-report.json
+          retention-days: 30
+
+      - name: Auto-rollback on health check failure
+        if: steps.health.outcome == 'failure'
+        run: |
+          echo "::error::Health check FAILED. Initiating rollback to previous commit."
+
+          # Get the previous commit SHA
+          PREVIOUS_SHA=$(git rev-parse HEAD~1)
+          echo "Rolling back to: $PREVIOUS_SHA"
+
+          # Configure git for the rollback commit
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Create a revert commit (not force-push -- safe rollback)
+          git revert --no-edit HEAD
+
+          # Push the revert
+          git push origin main
+
+          echo "::warning::Rollback complete. Reverted to commit $PREVIOUS_SHA"
+
+      - name: Confirm healthy
+        if: steps.health.outcome == 'success'
+        run: echo "Health check passed. Deployment is healthy."

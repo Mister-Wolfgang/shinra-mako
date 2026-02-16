@@ -20,6 +20,7 @@ const path = require("path");
 const fs = require("fs");
 const os = require("os");
 const { execSync } = require("child_process");
+const { isMemoryServiceHealthy, memoryFallbackMessage } = require("./lib/memory-fallback");
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -150,7 +151,16 @@ async function main() {
   // Step 4: Sync .mcp.json
   syncMcpConfig(pythonCmd);
 
-  // Step 5: Report success
+  // Step 5: Check MCP Memory health (ST-9 fallback)
+  const healthy = isMemoryServiceHealthy();
+  if (!healthy) {
+    const fallbackMsg = memoryFallbackMessage("ensure-memory-server");
+    log(`WARNING: ${fallbackMsg}`);
+    output("mcp-memory-service configured (SQLite-Vec) -- memory service unhealthy, fallback active");
+    return;
+  }
+
+  // Step 6: Report success
   output("mcp-memory-service configured (SQLite-Vec)");
   log(`Storage path: ${MEMORY_DB_PATH}`);
   log("Ready.");
