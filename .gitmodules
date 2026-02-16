@@ -1,0 +1,3 @@
+[submodule "PROJETS/MAKO"]
+	path = PROJETS/MAKO
+	url = git@github.com:Mister-Wolfgang/MAKO.git
