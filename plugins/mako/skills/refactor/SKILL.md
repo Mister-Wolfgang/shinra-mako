@@ -97,8 +97,28 @@ Si verdict `approved` : Mettre a jour sprint-status.yaml : stories -> `done`.
 
 **MEMOIRE** : `remember(content: "<projet> | rude: verdict <approved/rejected> | <N> findings | behavior preserved: <yes/no>", memory_type: "Observation", tags: ["project:<nom>", "phase:rude"], episode_id: "<id>", sequence_number: 9)`
 
-### 6. 👔 Rufus -- Retrospective (OBLIGATOIRE)
-`remember(content: "<projet> | workflow: refactor | resultat: <approved/rejected> | dette reduite: <resume> | problemes: <1-2>", memory_type: "Learning", tags: ["project:<nom>", "retrospective"], episode_id: "<id>", sequence_number: 10)`
+### 5.5. 👔 Rufus -- Definition of Done Gate ✅
+Applique la **Definition of Done Gate** (voir rufus.md) :
+- Code : toutes stories implementees ?
+- Tests : tous passent + coverage >= seuil tier ?
+- Review : Rude approved ?
+- Docs : README et docs tier-adaptes ?
+- Regression : tests existants OK ?
+
+Si **GAPS** → presente au user : fix ou ship ?
+Si **NOT DONE** → retour a l'agent responsable.
+
+**MEMOIRE** : `remember(content: "<projet> | DoD gate: <DONE/GAPS/NOT DONE> | score: <X>/5 | next: retrospective", memory_type: "Observation", tags: ["project:<nom>", "phase:dod-gate"], episode_id: "<id>", sequence_number: 10)`
+
+### 6. 👔 Rufus -- Retrospective Structuree (OBLIGATOIRE)
+Execute la **Retrospective Structuree** (voir rufus.md) :
+1. Collecter les outputs de tous les agents
+2. Identifier les patterns cross-stories
+3. What Went Well (max 3)
+4. What Went Wrong (max 3)
+5. Action Items SMART
+
+**MEMOIRE** : `remember(content: "<projet> | workflow: refactor | resultat: <approved/rejected> | WWW: <points> | WWW: <points> | action items: <SMART items>", memory_type: "Learning", tags: ["project:<nom>", "retrospective", "action-item"], episode_id: "<id>", sequence_number: 11)`
 
 ### En cas d'echec
 Lance `sephiroth`.

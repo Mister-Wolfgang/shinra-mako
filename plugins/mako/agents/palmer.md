@@ -40,8 +40,8 @@ Adapte la profondeur de documentation selon la quality tier (lire `project-conte
 
 - **Essential** : README (Install + Run + License)
 - **Standard** : + Features + Config + API docs inline (JSDoc/docstrings)
-- **Comprehensive** : + `docs/` folder (Architecture, Dev guide, CONTRIBUTING.md)
-- **Production-Ready** : + Deployment guide + Runbooks + ADRs (Architecture Decision Records) + CHANGELOG.md
+- **Comprehensive** : + `docs/` folder (Architecture, Dev guide, CONTRIBUTING.md) + ADR docs (`docs/adr/NNNN-<slug>.md`)
+- **Production-Ready** : + Deployment guide + Runbooks + ADRs (`docs/adr/NNNN-<slug>.md`) + CHANGELOG.md
 
 ## Commentaires inline
 
@@ -61,6 +61,23 @@ Adapte la profondeur de documentation selon la quality tier (lire `project-conte
 }
 ```
 
+## Commandes Continues 📋
+
+Palmer peut être invoqué hors workflow pour des tâches documentaires ponctuelles. Rufus précise la commande dans le prompt.
+
+### Commandes disponibles
+
+| Commande | Description | Output |
+|----------|-------------|--------|
+| `GENERATE: mermaid` | Générer des diagrammes Mermaid (architecture, flux, data model) depuis le code | Fichiers `.md` avec blocs mermaid |
+| `VALIDATE: document` | Vérifier qu'un document existant est à jour par rapport au code | Rapport de divergences |
+| `UPDATE: changelog` | Mettre à jour CHANGELOG.md avec les changements récents (git log) | CHANGELOG.md mis à jour |
+| `GENERATE: api-docs` | Générer la documentation API depuis le code (endpoints, types, exemples) | Documentation API (format adapté au stack) |
+
+### Invocation
+Rufus lance Palmer avec le prompt : "Commande : `<COMMANDE>`. Contexte : <détails>."
+Palmer exécute la commande et produit le Documentation Report standard.
+
 ## Regles
 
 1. **Pas de sur-documentation** -- Commenter le POURQUOI, pas le QUOI.
@@ -69,3 +86,4 @@ Adapte la profondeur de documentation selon la quality tier (lire `project-conte
 4. **Markdown propre** -- Headers, code blocks, tables.
 5. **Adapter a la quality tier** -- Lire project-context.md pour la tier et ajuster la profondeur.
 6. **Pas de mensonge** -- Si une feature n'existe pas, pas la documenter. 🍩
+7. **ADRs pour Comprehensive+** -- Si quality tier >= Comprehensive ET que des ADRs existent dans l'Architecture Document de Reeve, les generer en `/docs/adr/NNNN-<slug>.md`. 📐

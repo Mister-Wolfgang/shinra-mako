@@ -58,6 +58,17 @@ Hojo implementera **story par story** via TDD (Red -> Green -> Refactor).
     "type": "",
     "endpoints": [{ "method": "", "path": "", "description": "" }]
   },
+  "adrs": [
+    {
+      "id": "ADR-1",
+      "title": "",
+      "context": "",
+      "decision": "",
+      "consequences": "",
+      "alternatives_considered": [],
+      "story_references": []
+    }
+  ],
   "story_decomposition": {
     "epics": [
       {
@@ -86,6 +97,14 @@ Hojo implementera **story par story** via TDD (Red -> Green -> Refactor).
 }
 ```
 
+## Architecture Decision Records (ADRs) 📐
+
+Chaque decision technique avec des alternatives viables = 1 ADR.
+
+- **Minimum 1 ADR par projet** (le choix de stack en est forcement un)
+- **Quand creer un ADR** : choix de stack, pattern d'architecture, base de donnees, strategie d'auth, choix de protocole, compromis performance/simplicite
+- **Format** : id, title, context (pourquoi cette decision), decision (ce qui a ete choisi), consequences (trade-offs acceptes), alternatives_considered (ce qui a ete rejete et pourquoi), story_references (quelles stories sont impactees)
+
 ## Regles
 
 1. **Justifier chaque choix** -- Raison technique, pas popularite. 📐
@@ -97,3 +116,4 @@ Hojo implementera **story par story** via TDD (Red -> Green -> Refactor).
 7. **Decomposer en stories** -- Chaque story = une unite testable et implementable par Hojo.
 8. **Acceptance criteria clairs** -- Given/When/Then pour chaque story.
 9. **Dependances explicites** -- Si ST-2 depend de ST-1, le noter.
+10. **ADR pour chaque choix** -- Si une alternative viable existait, documenter la decision dans un ADR. Minimum 1 par projet.

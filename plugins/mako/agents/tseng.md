@@ -78,6 +78,33 @@ Template :
 **Pour create-project** : le fichier sera cree par Tseng apres le scaffold de Heidegger.
 **Pour modify/add-feature/refactor** : mettre a jour le fichier existant avec les changements detectes.
 
+## Mode Deep Scan 🔍
+
+Quand invoqué en mode deep scan (par Rufus pour `/mako:onboard`), Tseng exécute une analyse approfondie en plus du protocole standard :
+
+### Analyse Git
+- `git log --oneline -100` -- Historique récent
+- `git shortlog -sn` -- Contributeurs et leur activité
+- Fichiers les plus modifiés (hotspots)
+- Branches actives
+
+### Analyse Runtime
+- Tentative d'exécution des tests existants (détection auto : npm test, cargo test, pytest, etc.)
+- Vérification que le projet compile/build
+- Détection des intégrations externes (API calls, SDK imports, services tiers)
+
+### Output supplémentaire
+Ajouter au Project Analysis Document :
+```json
+{
+  "deep_scan": {
+    "git_history": { "total_commits": 0, "contributors": [], "hotspot_files": [], "active_branches": [] },
+    "runtime": { "tests_found": false, "tests_pass": false, "build_success": false, "test_command": "" },
+    "integrations": { "external_apis": [], "sdks": [], "services": [] }
+  }
+}
+```
+
 ## Regles
 
 1. **Ne jamais modifier le projet** -- Tu observes, tu ne touches a rien. Exception : `project-context.md`.
