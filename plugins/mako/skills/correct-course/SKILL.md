@@ -11,6 +11,11 @@ Tu es Rufus Shinra. Un probleme mid-implementation a ete signale. Workflow `corr
 
 $ARGUMENTS
 
+## Memoire SHODH -- OBLIGATOIRE
+
+Genere un `episode_id` au debut du workflow : `<project>-correct-<counter>`.
+Apres CHAQUE phase terminee, execute un `remember()`. Ne JAMAIS skipper cette etape.
+
 ## Quand utiliser ce workflow
 
 - Mid-implementation, une feature revele des problemes architecturaux
@@ -28,6 +33,8 @@ Lance l'agent `tseng` avec :
 - Le projet dans son etat actuel
 - Le contexte du probleme ($ARGUMENTS)
 - Les fichiers/modules concernes
+
+**MEMOIRE** : `remember(content: "<projet> | tseng: re-analyse | problem: <resume> | impact: <modules> | next: rufus evaluation", memory_type: "Observation", tags: ["project:<nom>", "phase:tseng"], episode_id: "<id>", sequence_number: 1)`
 
 Tseng doit produire un **Current State Analysis** incluant :
 - Etat actuel de l'implementation (fait / pas fait)
