@@ -36,10 +36,9 @@ Les 8 piliers de securite Rust (source: Corgea 2025) :
 - **Docker minimal** : Multistage build, utilisateur non-root, image slim
 - **Configuration securisee** : Env vars pour les secrets, validation de chaque valeur
 
-## Memoire SHODH -- OBLIGATOIRE
+## Memoire -- OBLIGATOIRE
 
-Genere un `episode_id` au debut du workflow : `<project>-rust-security-<counter>`.
-Apres CHAQUE phase d'agent terminee, execute un `remember()`. Ne JAMAIS skipper cette etape.
+Apres CHAQUE phase d'agent terminee, execute un `store_memory()`. Ne JAMAIS skipper cette etape.
 
 ## Workflow
 
@@ -54,7 +53,7 @@ Lance l'agent `tseng` avec :
 
 Il doit produire un **rapport d'analyse** avec inventaire des risques securite.
 
-**MEMOIRE** : `remember(content: "<projet> | tseng: scan Rust | unsafe blocks: <N> | unwrap: <N> | risks: <resume> | next: rude audit", memory_type: "Observation", tags: ["project:<nom>", "phase:tseng"], episode_id: "<id>", sequence_number: 1)`
+**MEMOIRE** : `store_memory(content: "<projet> | tseng: scan Rust | unsafe blocks: <N> | unwrap: <N> | risks: <resume> | next: rude audit", memory_type: "observation", tags: ["project:<nom>", "phase:tseng"])`
 
 ### 2. Rude -- Audit securite Rust
 
@@ -65,7 +64,7 @@ Lance l'agent `rude` avec :
 
 Il doit produire un **Security Audit Report** avec chaque violation classee par severite.
 
-**MEMOIRE** : `remember(content: "<projet> | rude: audit securite | <N> violations (<N> critical, <N> major, <N> minor) | next: hojo fixes", memory_type: "Observation", tags: ["project:<nom>", "phase:rude"], episode_id: "<id>", sequence_number: 2)`
+**MEMOIRE** : `store_memory(content: "<projet> | rude: audit securite | <N> violations (<N> critical, <N> major, <N> minor) | next: hojo fixes", memory_type: "observation", tags: ["project:<nom>", "phase:rude"])`
 
 ### 3. Hojo -- Application des corrections
 
@@ -78,7 +77,7 @@ Pour chaque correction :
 - Un commit : `[security] Rust best practice: <description>`
 - Priorite : critiques d'abord, puis majeures, puis mineures
 
-**MEMOIRE** : `remember(content: "<projet> | hojo: <N> corrections appliquees | commits: <N> | next: reno + elena tests", memory_type: "Observation", tags: ["project:<nom>", "phase:hojo"], episode_id: "<id>", sequence_number: 3)`
+**MEMOIRE** : `store_memory(content: "<projet> | hojo: <N> corrections appliquees | commits: <N> | next: reno + elena tests", memory_type: "observation", tags: ["project:<nom>", "phase:hojo"])`
 
 ### 4. Reno -- Tests unitaires et integration
 
@@ -94,7 +93,7 @@ Il doit :
 - Verifier les overflow checks dans `Cargo.toml`
 - Commiter : `[test] 🔥 security integration tests`
 
-**MEMOIRE** : `remember(content: "<projet> | reno: clippy + audit + integration tests | <N> tests | next: elena", memory_type: "Observation", tags: ["project:<nom>", "phase:reno"], episode_id: "<id>", sequence_number: 4)`
+**MEMOIRE** : `store_memory(content: "<projet> | reno: clippy + audit + integration tests | <N> tests | next: elena", memory_type: "observation", tags: ["project:<nom>", "phase:reno"])`
 
 ### 4.5. Elena -- Tests de securite specifiques
 
@@ -108,17 +107,17 @@ Elle doit :
 - Tests d'injection, overflow, concurrence, fuzzing
 - Commiter : `[test] 💛 security tests for Rust best practices`
 
-**MEMOIRE** : `remember(content: "<projet> | elena: security tests specifiques | <N> tests injection/overflow/concurrence | next: rude re-review", memory_type: "Observation", tags: ["project:<nom>", "phase:elena"], episode_id: "<id>", sequence_number: 5)`
+**MEMOIRE** : `store_memory(content: "<projet> | elena: security tests specifiques | <N> tests injection/overflow/concurrence | next: rude re-review", memory_type: "observation", tags: ["project:<nom>", "phase:elena"])`
 
 ### 5. Rude -- Re-review
 
 Lance l'agent `rude` avec le codebase final.
 Il doit confirmer que toutes les violations sont corrigees.
 
-**MEMOIRE** : `remember(content: "<projet> | rude: re-review | verdict: <approved/rejected> | violations remaining: <N>", memory_type: "Observation", tags: ["project:<nom>", "phase:rude"], episode_id: "<id>", sequence_number: 6)`
+**MEMOIRE** : `store_memory(content: "<projet> | rude: re-review | verdict: <approved/rejected> | violations remaining: <N>", memory_type: "observation", tags: ["project:<nom>", "phase:rude"])`
 
 ### 6. 👔 Rufus -- Retrospective (OBLIGATOIRE)
-`remember(content: "<projet> | workflow: rust-security | resultat: <approved/rejected> | violations fixed: <N>/<total> | patterns: <resume>", memory_type: "Learning", tags: ["project:<nom>", "retrospective"], episode_id: "<id>", sequence_number: 7)`
+`store_memory(content: "<projet> | workflow: rust-security | resultat: <approved/rejected> | violations fixed: <N>/<total> | patterns: <resume>", memory_type: "learning", tags: ["project:<nom>", "retrospective"])`
 
 ### En cas d'echec ou de review rejetee
 

@@ -11,10 +11,9 @@ Tu es Rufus Shinra. Bug reporte. Workflow `bug-fix`.
 
 $ARGUMENTS
 
-## Memoire SHODH -- OBLIGATOIRE
+## Memoire -- OBLIGATOIRE
 
-Genere un `episode_id` au debut du workflow : `<project>-fix-<counter>`.
-Apres CHAQUE phase d'agent terminee, execute un `remember()`. Ne JAMAIS skipper cette etape.
+Apres CHAQUE phase d'agent terminee, execute un `store_memory()`. Ne JAMAIS skipper cette etape.
 
 ## Etape 0 -- Evaluation Quick Fix
 
@@ -28,11 +27,11 @@ Evalue la demande utilisateur. Un **quick fix** remplit TOUS ces criteres :
 
 Lance directement `hojo` avec le contexte du bug. Commiter : `[fix] ⚔️ <description>`
 
-**MEMOIRE** : `remember(content: "<projet> | hojo: quick fix applique | files: <count> | next: reno verification", memory_type: "Observation", tags: ["project:<nom>", "phase:hojo"], episode_id: "<id>", sequence_number: 1)`
+**MEMOIRE** : `store_memory(content: "<projet> | hojo: quick fix applique | files: <count> | next: reno verification", memory_type: "observation", tags: ["project:<nom>", "phase:hojo"])`
 
 Puis lance `reno` pour verifier l'absence de regression. Commiter : `[test] 🔥 quick fix verification`
 
-**MEMOIRE** : `remember(content: "<projet> | reno: quick fix verification | <passed/failed> | next: <done/escalation>", memory_type: "Observation", tags: ["project:<nom>", "phase:reno"], episode_id: "<id>", sequence_number: 2)`
+**MEMOIRE** : `store_memory(content: "<projet> | reno: quick fix verification | <passed/failed> | next: <done/escalation>", memory_type: "observation", tags: ["project:<nom>", "phase:reno"])`
 
 **Detection d'escalation** : Apres Hojo et Reno, verifie ces signaux :
 - `escalation_signal.detected: true` dans le rapport de Hojo
@@ -52,36 +51,36 @@ Puis lance `reno` pour verifier l'absence de regression. Commiter : `[test] 🔥
 Lance l'agent `tseng` pour scanner le projet et localiser le contexte du bug.
 Il doit aussi mettre a jour `project-context.md`.
 
-**MEMOIRE** : `remember(content: "<projet> | tseng: analyse bug | root cause candidates: <resume> | next: sephiroth", memory_type: "Observation", tags: ["project:<nom>", "phase:tseng"], episode_id: "<id>", sequence_number: 3)`
+**MEMOIRE** : `store_memory(content: "<projet> | tseng: analyse bug | root cause candidates: <resume> | next: sephiroth", memory_type: "observation", tags: ["project:<nom>", "phase:tseng"])`
 
 ### 2. 🖤 Sephiroth -- Diagnostic
 Lance l'agent `sephiroth` avec le rapport de Tseng + la description du bug.
 Il doit identifier la cause racine et proposer un fix precis.
 
-**MEMOIRE** : `remember(content: "<projet> | sephiroth: diagnostic | root cause: <cause> | fix: <resume> | next: hojo", memory_type: "Error", tags: ["project:<nom>", "phase:sephiroth"], episode_id: "<id>", sequence_number: 4)`
+**MEMOIRE** : `store_memory(content: "<projet> | sephiroth: diagnostic | root cause: <cause> | fix: <resume> | next: hojo", memory_type: "error", tags: ["project:<nom>", "phase:sephiroth"])`
 
 ### 3. 🧪 Hojo -- Correction
 Lance l'agent `hojo` avec le diagnostic de Sephiroth.
 Commiter : `[fix] ⚔️ <description>`
 
-**MEMOIRE** : `remember(content: "<projet> | hojo: fix applique | files: <count> | tests passing | next: reno", memory_type: "Observation", tags: ["project:<nom>", "phase:hojo"], episode_id: "<id>", sequence_number: 5)`
+**MEMOIRE** : `store_memory(content: "<projet> | hojo: fix applique | files: <count> | tests passing | next: reno", memory_type: "observation", tags: ["project:<nom>", "phase:hojo"])`
 
 ### 4. 🔥 Reno -- Verification
 Lance l'agent `reno`. Verifier que le fix fonctionne + pas de regression.
 Commiter : `[test] 🔥 regression tests`
 
-**MEMOIRE** : `remember(content: "<projet> | reno: verification fix | <passed/failed> | regression: <none/found> | next: elena", memory_type: "Observation", tags: ["project:<nom>", "phase:reno"], episode_id: "<id>", sequence_number: 6)`
+**MEMOIRE** : `store_memory(content: "<projet> | reno: verification fix | <passed/failed> | regression: <none/found> | next: elena", memory_type: "observation", tags: ["project:<nom>", "phase:reno"])`
 
 ### 4.5. 💛 Elena -- Verification securite
 Lance l'agent `elena`. Verifier qu'aucune faille de securite n'a ete introduite par le fix.
 Commiter : `[test] 💛 security verification`
 
-**MEMOIRE** : `remember(content: "<projet> | elena: security verification | no new vulnerabilities | next: <rude/done>", memory_type: "Observation", tags: ["project:<nom>", "phase:elena"], episode_id: "<id>", sequence_number: 7)`
+**MEMOIRE** : `store_memory(content: "<projet> | elena: security verification | no new vulnerabilities | next: <rude/done>", memory_type: "observation", tags: ["project:<nom>", "phase:elena"])`
 
 ### 5. 🕶️ Rude -- Review (si escalade)
 Si ce workflow a ete declenche par auto-escalation depuis un quick fix, lance `rude` pour une review adversarial finale.
 
-**MEMOIRE** : `remember(content: "<projet> | rude: review fix | verdict: <approved/rejected> | <N> findings", memory_type: "Observation", tags: ["project:<nom>", "phase:rude"], episode_id: "<id>", sequence_number: 8)`
+**MEMOIRE** : `store_memory(content: "<projet> | rude: review fix | verdict: <approved/rejected> | <N> findings", memory_type: "observation", tags: ["project:<nom>", "phase:rude"])`
 
 ## Auto-Escalation 🚨
 
@@ -94,4 +93,4 @@ Si le quick fix a revele des signaux d'escalation :
 L'utilisateur peut refuser l'escalation et garder le quick fix tel quel.
 
 ### Retrospective (OBLIGATOIRE)
-`remember(content: "<projet> | workflow: fix-bug | type: <quick/complex/escalated> | root cause: <resume> | resultat: <fixed/ongoing>", memory_type: "Learning", tags: ["project:<nom>", "retrospective"], episode_id: "<id>", sequence_number: 9)`
+`store_memory(content: "<projet> | workflow: fix-bug | type: <quick/complex/escalated> | root cause: <resume> | resultat: <fixed/ongoing>", memory_type: "learning", tags: ["project:<nom>", "retrospective"])`

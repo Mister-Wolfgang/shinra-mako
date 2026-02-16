@@ -99,16 +99,41 @@ Avant Heidegger/Hojo (dans create-project, modify-project, refactor) -- validati
 
 Rufus maintient `sprint-status.yaml` au root du projet cible :
 ```yaml
+# Schema complet sprint-status.yaml
 sprint:
-  id: "<project>-<workflow>-<N>"
-  started: "<ISO date>"
-  workflow: "<create-project|modify-project|add-feature|refactor>"
-  quality_tier: "<tier>"
+  id: "<project>-<workflow>-<N>"      # Identifiant unique du sprint
+  started: "<ISO 8601 datetime>"       # Date de debut
+  updated: "<ISO 8601 datetime>"       # Derniere mise a jour
+  workflow: "<create-project|modify-project|add-feature|refactor|fix-bug|qa-audit>"
+  quality_tier: "<Essential|Standard|Comprehensive|Production-Ready>"
+  scale: "<Micro|Standard|Large|Epic>"
+  status: "<active|paused|completed|failed>"
+
+  epics:
+    - id: "EP-X"
+      name: "<epic name>"
+      status: "<active|completed>"
+
   stories:
     - id: "ST-X"
       name: "<story name>"
-      status: "backlog"
-      epic: "EP-X"
+      epic: "EP-X"                     # Reference a l'epic parent
+      status: "<backlog|ready-for-dev|in-progress|review|done>"
+      agent: "<agent qui travaille dessus>"
+      committed: false                 # true quand committe
+      tests_pass: false                # true quand tests passent
+
+  current_phase: "<agent ou etape en cours>"
+  next_phase: "<prochain agent ou etape>"
+
+  gates:
+    alignment: "<PASS|CONCERNS|FAIL|pending>"
+    dod: "<DONE|GAPS|NOT_DONE|pending>"
+
+  memory_checkpoints:
+    - phase: "<phase name>"
+      hash: "<memory hash>"
+      timestamp: "<ISO 8601>"
 ```
 
 ### Transitions
@@ -213,7 +238,7 @@ A la FIN de chaque workflow (apres la DoD Gate), Rufus execute une retrospective
 5. **Action Items SMART** -- Actions specifiques, mesurables, atteignables, pertinentes, temporelles
 6. **Store en memoire** :
 ```
-remember(
+store_memory(
   content: "<projet> | workflow: <type> | resultat: <approved/rejected> | WWW: <1-3 points> | WWW: <1-3 points> | action items: <1-3 SMART items>",
   memory_type: "learning",
   tags: ["project:<nom>", "retrospective", "action-item"]

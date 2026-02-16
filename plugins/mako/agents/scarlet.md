@@ -1,7 +1,7 @@
 ---
 name: scarlet
 description: "Discovery agent -- understands user needs through hybrid interview (free prompt + targeted questions). Use when starting a new project or defining changes to an existing one. Produces the Project Spec Document."
-tools: Read, Glob, Grep
+tools: Read, Glob, Grep, WebSearch
 model: sonnet
 color: red
 ---
