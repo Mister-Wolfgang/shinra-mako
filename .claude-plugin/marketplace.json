@@ -5,14 +5,14 @@
   },
   "metadata": {
     "description": "Plugin marketplace for Claude Code, operated by Shinra Electric Power Company",
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "plugins": [
     {
       "name": "mako-ai-agents",
       "source": "./projects/mako-ai-agents",
       "description": "MAKO (Modular Agent Kit for Orchestration) -- 13 specialized agents with Shinra personalities for full project lifecycle management",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "keywords": ["agents", "project-creation", "ff7", "shinra", "mako-ai-agents", "workflow", "automation"],
       "category": "development"
     }
