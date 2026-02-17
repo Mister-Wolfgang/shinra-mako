@@ -5,16 +5,37 @@
   },
   "metadata": {
     "description": "Plugin marketplace for Claude Code, operated by Shinra Electric Power Company",
-    "version": "1.1.0"
+    "version": "1.2.0"
   },
   "plugins": [
     {
       "name": "mako-ai-agents",
       "source": "./projects/mako-ai-agents",
       "description": "MAKO (Modular Agent Kit for Orchestration) -- 13 specialized agents with Shinra personalities for full project lifecycle management",
-      "version": "1.1.0",
-      "keywords": ["agents", "project-creation", "ff7", "shinra", "mako-ai-agents", "workflow", "automation"],
+      "version": "1.2.0",
+      "keywords": [
+        "agents",
+        "project-creation",
+        "ff7",
+        "shinra",
+        "mako-ai-agents",
+        "workflow",
+        "automation"
+      ],
       "category": "development"
     }
-  ]
+  ],
+  "mcpServers": {
+    "memory": {
+      "command": "python",
+      "args": [
+        "-m",
+        "mcp_memory_service.server"
+      ],
+      "env": {
+        "MCP_MEMORY_STORAGE_BACKEND": "sqlite_vec",
+        "MCP_MEMORY_SQLITE_PATH": "${HOME}/.shinra/memory.db"
+      }
+    }
+  }
 }
