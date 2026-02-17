@@ -24,18 +24,5 @@
       ],
       "category": "development"
     }
-  ],
-  "mcpServers": {
-    "memory": {
-      "command": "python",
-      "args": [
-        "-m",
-        "mcp_memory_service.server"
-      ],
-      "env": {
-        "MCP_MEMORY_STORAGE_BACKEND": "sqlite_vec",
-        "MCP_MEMORY_SQLITE_PATH": "${HOME}/.shinra/memory.db"
-      }
-    }
-  }
+  ]
 }
