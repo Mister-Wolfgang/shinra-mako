@@ -1,4 +1,4 @@
-![SHINRA](logo.png)
+![SHINRA](logo.jpg)
 
 # SHINRA Marketplace v6.1
 
